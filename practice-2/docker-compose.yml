@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+
+  webui:
+    build:
+      context: ./
+      dockerfile: frontend/Dockerfile
+    restart: always
+    ports:
+      - 7860:7860
+    depends_on:
+      - llm-rag
+
+  chromadb:
+    image: chromadb/chroma:latest
+    restart: always
+    volumes:
+      - ./chroma-data:/chroma/chroma
+    ports:
+      - 8000:8000
+
+  llm-rag:
+    build:
+      context: ./
+      dockerfile: backend/Dockerfile
+    depends_on:
+      - chromadb
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env
+      - ./hf-models:/root/.cache/huggingface
+    ports:
+      - 9000:9000
+    # deploy: # NOTE: Uncomment this if you have gpu
+      # resources:
+      #   reservations:
+      #     devices:
+      #       - driver: nvidia
+      #         count: 1
+      #         capabilities: [gpu]
+    restart: always
+
+volumes:
+  index_data:
