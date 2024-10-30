@@ -11,6 +11,8 @@ services:
       - 7860:7860
     depends_on:
       - llm-rag
+    networks:
+      - rag-network
 
   chromadb:
     image: chromadb/chroma:latest
@@ -19,6 +21,13 @@ services:
       - ./chroma-data:/chroma/chroma
     ports:
       - 8000:8000
+    networks:
+      - rag-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
 
   llm-rag:
     build:
@@ -41,6 +50,12 @@ services:
       #         count: 1
       #         capabilities: [gpu]
     restart: always
+    networks:
+      - rag-network
 
 volumes:
   index_data:
+
+networks:
+  rag-network:
+    driver: bridge
