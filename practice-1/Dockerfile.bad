@@ -1,0 +1,18 @@
+# Использование жирного образа
+FROM python:3.10 
+
+WORKDIR /app
+
+VOLUME /app/data
+
+# Копирование вообще всего, в т.ч. ".env", не использование dockerignore
+COPY . /app/
+
+# Разделение команд, что приводит к увеличению количества слоев
+RUN python -m pip install --upgrade pip
+RUN pip install poetry
+RUN poetry install
+
+EXPOSE 9000
+
+CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "9000"]
