@@ -6,6 +6,7 @@ services:
     build:
       context: ./
       dockerfile: frontend/Dockerfile
+    container_name: webui
     restart: always
     ports:
       - 7860:7860
@@ -16,6 +17,7 @@ services:
 
   chromadb:
     image: chromadb/chroma:latest
+    container_name: chromadb
     restart: always
     volumes:
       - ./chroma-data:/chroma/chroma
@@ -34,6 +36,7 @@ services:
     build:
       context: ./
       dockerfile: backend/Dockerfile
+    container_name: llm-rag
     depends_on:
       - chromadb
     env_file:
@@ -43,6 +46,7 @@ services:
       - ./hf-models:/root/.cache/huggingface
     ports:
       - 9000:9000
+    command: ["poetry", "run", "uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "9000"]
     # deploy: # NOTE: Uncomment this if you have gpu
       # resources:
       #   reservations:

@@ -16,4 +16,4 @@ EXPOSE 9000
 
 COPY backend /app/backend
 
-CMD ["poetry", "run", "uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "9000"]
+# CMD ["poetry", "run", "uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "9000"]
