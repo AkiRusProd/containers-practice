@@ -1,15 +1,8 @@
 from backend.src.chroma_client import ChromaClient
-from backend.src.embedder import HFEmbedder
+from backend.src.embedder import HFEmbedder, BaseEmbedder
 from tqdm import tqdm
 
 # NOTE: EXAMPLE; Run as Module: python -m backend.src.db_initializer
-
-embedder = HFEmbedder()
-
-chroma_client = ChromaClient(
-    host='localhost', port=8000, 
-    embedder = embedder
-)
 
 food_collection = [
     "Куркума помогает снизить воспаление в организме.",
@@ -100,5 +93,28 @@ food_collection = [
     "Эвкалипт содержит эвкалиптол, который помогает облегчить дыхание и уменьшить воспаление горла.",
 ]
 
-for item in tqdm(food_collection, total=len(food_collection)):
-    chroma_client.add(item, collection_name="food")
+class ChromaClientInitializer:
+    def __init__(self,  host: str='chromadb', port: int=8000,  embedder: BaseEmbedder = HFEmbedder()) -> None:
+        self.embedder = embedder
+        self.chroma_client = ChromaClient(
+            host=host, port=port, 
+            embedder = embedder
+        )
+
+    def initialize(self, collection: list[str], collection_name: str) -> None:
+        collection_name = "food"
+        chroma_collection = self.chroma_client.client.get_collection(name=collection_name)
+
+        if chroma_collection.count() == 0:
+            print(f"Collection '{collection_name}' is empty. Feeding collection...")
+            for item in tqdm(collection, total=len(collection)):
+                self.chroma_client.add(item, collection_name=collection_name)
+        else:
+            print(f"Collection '{collection_name}' is not empty. Skipping feeding...")
+
+
+if __name__ == "__main__":
+    db_initializer = ChromaClientInitializer()
+    db_initializer.initialize(collection=food_collection, collection_name="food")
+
+

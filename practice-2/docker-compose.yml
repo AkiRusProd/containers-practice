@@ -1,6 +1,16 @@
 version: '3.8'
 
 services:
+  init:
+    build:
+      context: ./
+      dockerfile: backend/Dockerfile.dbinit
+    container_name: init
+    command: ["poetry", "run", "python", "-m", "backend.src.init_db"]
+    depends_on:
+      - chromadb
+    networks:
+      - rag-network
 
   webui:
     build:
