@@ -6,6 +6,7 @@ services:
       context: ./
       dockerfile: backend/Dockerfile.dbinit
     container_name: init
+    image: rag/init
     command: ["poetry", "run", "python", "-m", "backend.src.init_db"]
     depends_on:
       - chromadb
@@ -17,6 +18,7 @@ services:
       context: ./
       dockerfile: frontend/Dockerfile
     container_name: webui
+    image: rag/webui
     restart: always
     ports:
       - 7860:7860
@@ -47,12 +49,12 @@ services:
       context: ./
       dockerfile: backend/Dockerfile
     container_name: llm-rag
+    image: rag/llm
     depends_on:
       - chromadb
     env_file:
       - .env
     volumes:
-      - ./.env:/app/.env
       - ./hf-models:/root/.cache/huggingface
     ports:
       - 9000:9000
@@ -68,8 +70,6 @@ services:
     networks:
       - rag-network
 
-volumes:
-  index_data:
 
 networks:
   rag-network:
