@@ -1,7 +1,7 @@
 # Практика 3: Kubernetes
 
 ## Отчет по заданию
-1. Запуск minikube
+1. Запуск minikube      
 ![alt text](images/image.png)
 Исправляем проблему с доступом `https://registry.k8s.io` командой `sudo bash -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'`:              
 ![alt text](images/fix_minikube.png)
