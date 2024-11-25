@@ -5,6 +5,8 @@ kubectl rollout restart deployment postgres
 
 kubectl delete deployments,pods,services,configmaps,secrets --all
 
+kubectl delete pvc nextcloud-data
+
 kubectl create -f pg_secret.yml
 kubectl create -f pg_configmap.yml
 kubectl create -f pg_service.yml
