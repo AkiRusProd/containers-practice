@@ -1,0 +1,13 @@
+kubectl scale deployment nextcloud --replicas=0
+kubectl scale deployment nextcloud --replicas=1
+
+kubectl rollout restart deployment postgres
+
+kubectl delete deployments,pods,services,configmaps,secrets --all
+
+kubectl create -f pg_secret.yml
+kubectl create -f pg_configmap.yml
+kubectl create -f pg_service.yml
+kubectl create -f pg_deployment.yml
+kubectl create -f nextcloud_configmap.yml
+kubectl create -f nextcloud.yml
