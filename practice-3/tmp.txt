@@ -13,3 +13,9 @@ kubectl create -f pg_service.yml
 kubectl create -f pg_deployment.yml
 kubectl create -f nextcloud_configmap.yml
 kubectl create -f nextcloud.yml
+
+
+
+kubectl run -i --tty --rm debug --image=busybox --restart=Never --namespace=default -- /bin/sh
+wget http://chromadb:8000/docs
+wget -qO- http://chromadb:8000/docs

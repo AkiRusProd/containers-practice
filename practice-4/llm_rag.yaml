@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-rag
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-rag
+  template:
+    metadata:
+      labels:
+        app: llm-rag
+    spec:
+      containers:
+      - name: llm-rag
+        image: rag/llm
+        envFrom:
+        - configMapRef:
+            name: llm-config
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - mountPath: /root/.cache/huggingface
+          name: hf-models
+        command: ["poetry", "run", "uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "9000"]
+        resources:
+          limits:
+            nvidia.com/gpu: "1"  # Раскомментируйте, если используется GPU
+        restartPolicy: Always
+      volumes:
+      - name: hf-models
+        hostPath:
+          path: ./hf-models
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-rag
+spec:
+  ports:
+  - port: 9000
+    targetPort: 9000
+  selector:
+    app: llm-rag
