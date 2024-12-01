@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 *.log
+*.tar
 
 .venv/
 .env
