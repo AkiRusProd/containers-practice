@@ -61,3 +61,5 @@ WebUI: http://localhost:7860
 ### Результат
 ![Result](images/webui.png)
 
+### Дэшборд (minikube dashboard --url)
+![alt text](images/dashboard.png)
