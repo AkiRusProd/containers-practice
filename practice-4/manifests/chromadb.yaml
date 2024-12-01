@@ -17,9 +17,9 @@ spec:
         image: chromadb/chroma:0.4.25.dev145
         ports:
         - containerPort: 8000
-        # volumeMounts:
-        # - mountPath: /chroma/chroma
-        #   name: chroma-data
+        volumeMounts:
+        - mountPath: /chroma/chroma  # Путь внутри контейнера, куда будет смонтирована директория
+          name: chroma-data         # Имя тома, который мы монтируем
         readinessProbe:
           httpGet:
             path: /docs  # Путь для проверки состояния сервиса
@@ -31,10 +31,10 @@ spec:
             command: ["/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000"]
           initialDelaySeconds: 30
           periodSeconds: 30
-      # volumes:
-      # - name: chroma-data
-        # hostPath:
-        #   path: ./chroma-data
+      volumes:
+      - name: chroma-data
+        persistentVolumeClaim:
+          claimName: chroma-pvc
       dnsPolicy: "ClusterFirst"
       dnsConfig:
         nameservers:
@@ -45,15 +45,10 @@ kind: Service
 metadata:
   name: chromadb
 spec:
-  type: ClusterIP   # NodePort  # Добавлено
+  type: ClusterIP   # NodePort  # Если нужно, можно заменить на NodePort
   ports:
   - protocol: TCP
     port: 8000
     targetPort: 8000
-    # nodePort: 30000  # Порт на хосте (опционально, иначе выберется автоматически)
   selector:
     app: chromadb
-
-
-
-# kubectl port-forward service/chromadb 8000:8000

@@ -25,20 +25,18 @@ spec:
             name: llm-config
         ports:
         - containerPort: 9000
-        # volumeMounts:
-        # - mountPath: /root/.cache/huggingface
-        #   name: hf-models
+        volumeMounts:
+        - mountPath: /root/.cache/huggingface
+          name: hf-models
         command: ["poetry", "run", "uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "9000"]
         imagePullPolicy: Never
         # resources:
           # limits:
             # nvidia.com/gpu: "1"  # Раскомментируйте, если используется GPU
-        # restartPolicy: Always
-      # volumes:
-      # - name: hf-models
-      #   emptyDir: {}
-      #   hostPath:
-      #     path: ./hf-models
+      volumes:
+      - name: hf-models
+        persistentVolumeClaim:
+          claimName: rag-pvc
       dnsPolicy: "ClusterFirst"
       dnsConfig:
         nameservers:

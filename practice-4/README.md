@@ -27,7 +27,9 @@ minikube image load rag.tar
 ```bash
 kubectl create configmap llm-config --from-env-file=.env
 
+kubectl apply -f manifests/chromadb_pvc.yaml
 kubectl apply -f manifests/chromadb.yaml
+kubectl apply -f manifests/llm_rag_pvc.yaml
 kubectl apply -f manifests/llm_rag.yaml
 kubectl apply -f manifests/webui.yaml
 ```

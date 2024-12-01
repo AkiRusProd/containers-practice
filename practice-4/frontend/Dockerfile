@@ -18,7 +18,3 @@ EXPOSE 7860
 COPY webui.py /app/webui.py
 
 CMD ["poetry", "run", "python", "webui.py"]
-
-# docker build -t webui ./frontend
-# minikube image load webui
-# docker save webui -o webui.tar
