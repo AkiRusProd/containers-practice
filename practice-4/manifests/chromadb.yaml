@@ -20,6 +20,12 @@ spec:
         # volumeMounts:
         # - mountPath: /chroma/chroma
         #   name: chroma-data
+        readinessProbe:
+          httpGet:
+            path: /docs  # Путь для проверки состояния сервиса
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
         livenessProbe:
           exec:
             command: ["/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000"]

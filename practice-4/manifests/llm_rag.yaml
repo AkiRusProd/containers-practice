@@ -12,6 +12,11 @@ spec:
       labels:
         app: llm-rag
     spec:
+      initContainers:
+      - name: init
+        image: rag
+        command: ["poetry", "run", "python", "-m", "backend.src.init_db"]
+        imagePullPolicy: Never
       containers:
       - name: llm-rag
         image: rag

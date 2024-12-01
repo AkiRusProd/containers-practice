@@ -28,7 +28,6 @@ minikube image load rag.tar
 kubectl create configmap llm-config --from-env-file=.env
 
 kubectl apply -f manifests/chromadb.yaml
-kubectl apply -f manifests/init.yaml
 kubectl apply -f manifests/llm_rag.yaml
 kubectl apply -f manifests/webui.yaml
 ```
@@ -36,11 +35,11 @@ kubectl apply -f manifests/webui.yaml
 
 ### Структура
 
-Кластер состоит из 4 подов:
+Кластер состоит из 4 компонентов:
 1. `ChromaDB` - Векторное хранилище данных
 2. `LLM-RAG` - API, представляющее сущность LLM
 3. `WebUI` - Web-интерфейс
-4. `Init` - Инициализатор базы данных, если она пуста
+4. `Init` - Инит-контейнер, инициализирующий базу данных, если она пуста
 
 ![alt text](images/pods.png)
 
