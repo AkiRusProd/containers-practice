@@ -1,12 +1,8 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: init
+  name: init-job
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: init
   template:
     metadata:
       labels:
@@ -16,12 +12,13 @@ spec:
       - name: init
         image: rag
         command: ["poetry", "run", "python", "-m", "backend.src.init_db"]
-        # restartPolicy: Never
         imagePullPolicy: Never
+      restartPolicy: Never
       dnsPolicy: "ClusterFirst"
       dnsConfig:
         nameservers:
           - 8.8.8.8
+  backoffLimit: 2  # Количество повторных запусков в случае сбоя
 
 
 

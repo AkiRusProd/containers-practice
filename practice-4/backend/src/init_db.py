@@ -94,7 +94,7 @@ food_collection = [
 ]
 
 class ChromaClientInitializer:
-    def __init__(self,  host: str='chromadb', port: int=8000,  embedder: BaseEmbedder = HFEmbedder()) -> None:
+    def __init__(self,  host: str='localhost', port: int=8000,  embedder: BaseEmbedder = HFEmbedder()) -> None:
         self.embedder = embedder
         self.chroma_client = ChromaClient(
             host=host, port=port, 

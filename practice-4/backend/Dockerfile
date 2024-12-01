@@ -28,7 +28,7 @@ COPY . /app/backend
 
 # docker build -t rag ./backend/
 # docker save rag -o rag.tar
-
+# minikube image load rag.tar
 
 # minikube start --memory=8192 --cpus=2
 

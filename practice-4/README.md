@@ -1,18 +1,57 @@
-# Практика 2: Базовый RAG в докер-контейнере
+# Практика 2: Базовый RAG в Куберенетес-кластере
 
 ## Отчет по заданию
 
+### Старт
+
+```bash
+cd practice-4
+minikube start
+```
+
+### Сборка образов
+
+```bash
+# frontend
+docker build -t webui ./frontend
+minikube image load webui
+
+# backend (Весит 12 Гб, мне удалось его загрузить в миникуб через `tar`)
+docker build -t rag ./backend/
+docker save rag -o rag.tar 
+minikube image load rag.tar
+```
+
+### Применение конфигов Kubernetes
+
+```bash
+kubectl create configmap llm-config --from-env-file=.env
+
+kubectl apply -f chromadb.yaml
+kubectl apply -f init.yaml
+kubectl apply -f llm_rag.yaml
+kubectl apply -f webui.yaml
+```
+
+
 ### Структура
 
-Docker Compose состоит из 4 сервисов:
+Кластер состоит из 4 подов:
 1. `ChromaDB` - Векторное хранилище данных
 2. `LLM-RAG` - API, представляющее сущность LLM
 3. `WebUI` - Web-интерфейс
 4. `Init` - Инициализатор базы данных, если она пуста
 
-Все требования к [docker-compose.yml](docker-compose.yml) соблюдены.
+![alt text](images/pods.png)
 
 ### Доступ
+
+Команды для проброса портов:
+```bash
+kubectl port-forward service/webui 7860:7860
+kubectl port-forward service/llm-rag 9000:9000
+kubectl port-forward service/chromadb 8000:8000
+```
 
 API LLM-RAG: http://localhost:9000/docs      
 API ChromaDB: http://localhost:8000/docs     
@@ -21,34 +60,3 @@ WebUI: http://localhost:7860
 ### Результат
 ![Result](images/webui.png)
 
-### Вопросы:
-1. **Можно ли ограничивать ресурсы (например, память или CPU) для сервисов в docker-compose.yml? Если нет, то почему, если да, то как?**    
-    Ответ: Да, ограничивать ресурсы для сервисов в docker-compose.yml можно.    
-    Пример в Swarm Mode:
-    ```yaml
-    services:
-     my_service:
-      image: my_image
-      deploy:
-        resources:
-         limits:
-          cpus: '0.5'   # 50% от одного CPU
-          memory: 512M  # ограничение памяти в 512 МБ
-         reservations:
-          cpus: '0.1'   # резерв на 25% CPU
-          memory: 256M  # резерв памяти в 256 МБ
-    ```
-    Пример без Swarm Mode:
-    ```yaml
-    services:
-     my_service:
-      image: my_image
-      mem_limit: 512m  # ограничение памяти
-      cpus: '0.5'      # ограничение CPU
-    ```
-2. **Как можно запустить только определенный сервис из docker-compose.yml, не запуская остальные?**    
-    Ответ: Для запуска определенного сервиса используется ключ команда запуска `docker-compose up` с названием сервиса.     
-    Пример:
-    ```bash
-    docker-compose up my_service
-    ```
